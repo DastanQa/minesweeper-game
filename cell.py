@@ -1,24 +1,24 @@
-# cell.py
+# cell.py: ата-ана класы, барлық ұяшыққа ортақ бөлік
+import pygame
+
+from settings import CELL, TOP
 
 
 class Cell:
-    """Одна клетка поля."""
-
     def __init__(self, row, col):
         self.row = row
         self.col = col
-        self.has_mine = False
+        self.rect = pygame.Rect(col * CELL, TOP + row * CELL, CELL - 2, CELL - 2)
         self.is_open = False
-        self.count = 0  # сколько мин вокруг
 
-    def open(self):
+    def draw(self, screen, font, selected):
+        color = (110, 110, 140)
+        if selected:
+            color = (165, 165, 205)
+        pygame.draw.rect(screen, color, self.rect)
+
+    def reveal(self, game):
         self.is_open = True
 
-    def symbol(self, show_mines):
-        if self.is_open:
-            if self.has_mine:
-                return "*"
-            return str(self.count)
-        if show_mines and self.has_mine:
-            return "*"
-        return "#"
+    def on_game_over(self):
+        pass

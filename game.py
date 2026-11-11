@@ -1,46 +1,57 @@
-# game.py
+# game.py: ортақ класс, барлық объектіні біріктіреді
+import pygame
+
 from board import Board
-from player import Player
+from cursor import Cursor
+from settings import SIZE, MINES, WIDTH
 from timer import Timer
-from settings import SIZE, MINES
 
 
 class Game:
-    """Игра: связывает все объекты и решает, выиграл игрок или проиграл."""
-
     def __init__(self):
         self.board = Board()
-        self.player = Player()
+        self.cells = self.board.cells  # екі түрлі класс объектілері бір тізімде
+        self.cursor = Cursor()
         self.timer = Timer()
-        self.finished = False
+        self.opened = 0
+        self.over = False
         self.won = False
 
-    def play(self):
-        print("САПЁР", SIZE, "x", SIZE, ", мин:", MINES)
-        self.timer.start()
-        while not self.finished:
-            self.board.show(False)
-            print("Время:", self.timer.elapsed(), "сек")
-            row, col = self.player.ask_move()
-            cell = self.board.cells[row][col]
-            if cell.is_open:
-                print("Эта клетка уже открыта.")
-                continue
-            cell.open()
-            if cell.has_mine:
-                self.finished = True
-                self.won = False
-            else:
-                self.player.opened += 1
-                if self.player.opened == SIZE * SIZE - MINES:
-                    self.finished = True
-                    self.won = True
-        self.end()
+    def lose(self):
+        self.over = True
+        self.won = False
+        for obj in self.cells:
+            obj.on_game_over()
 
-    def end(self):
-        self.board.show(True)
-        if self.won:
-            print("Вы выиграли!")
-        else:
-            print("Вы наступили на мину. Игра окончена.")
-        print("Время:", self.timer.elapsed(), "сек")
+    def open_cell(self):
+        for obj in self.cells:
+            if self.cursor.is_on(obj) and not obj.is_open:
+                obj.reveal(self)
+
+    def handle_key(self, key):
+        if not self.over:
+            self.cursor.move(key)
+            if key == pygame.K_SPACE:
+                self.open_cell()
+
+    def update(self):
+        if not self.over:
+            self.timer.update()
+            if self.opened == SIZE * SIZE - MINES:
+                self.over = True
+                self.won = True
+
+    def draw(self, screen, font):
+        screen.fill((15, 15, 35))
+        time_text = font.render(f"Уақыт: {self.timer.seconds()}", True, (255, 255, 255))
+        screen.blit(time_text, (10, 8))
+        mines_text = font.render(f"Мина: {MINES}", True, (255, 120, 120))
+        screen.blit(mines_text, (WIDTH - 110, 8))
+        for obj in self.cells:
+            obj.draw(screen, font, self.cursor.is_on(obj))
+        if self.over:
+            if self.won:
+                message = font.render("Жеңдіңіз! Қайта бастау: R", True, (120, 255, 120))
+            else:
+                message = font.render("Жеңілдіңіз! Қайта бастау: R", True, (255, 120, 120))
+            screen.blit(message, (10, 38))

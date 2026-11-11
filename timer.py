@@ -1,15 +1,10 @@
-# timer.py
-import time
-
-
+# timer.py: ойын уақытын кадр санауышымен санайды
 class Timer:
-    """Секундомер."""
-
     def __init__(self):
-        self.start_time = 0
+        self.ticks = 0
 
-    def start(self):
-        self.start_time = time.time()
+    def update(self):
+        self.ticks = self.ticks + 1
 
-    def elapsed(self):
-        return int(time.time() - self.start_time)
+    def seconds(self):
+        return self.ticks // 60
