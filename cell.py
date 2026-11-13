@@ -1,21 +1,16 @@
-# cell.py: ата-ана класы, барлық ұяшыққа ортақ бөлік
+# cell.py: ұяшық (GameObject-тің еншілес класы, SafeCell мен MineCell-дің ата-анасы)
 import pygame
 
-from settings import CELL, TOP
+from game_object import GameObject
 
 
-class Cell:
+class Cell(GameObject):
     def __init__(self, row, col):
-        self.row = row
-        self.col = col
-        self.rect = pygame.Rect(col * CELL, TOP + row * CELL, CELL - 2, CELL - 2)
+        super().__init__(row, col)
         self.is_open = False
 
-    def draw(self, screen, font, selected):
-        color = (110, 110, 140)
-        if selected:
-            color = (165, 165, 205)
-        pygame.draw.rect(screen, color, self.rect)
+    def draw(self, screen, font):
+        pygame.draw.rect(screen, (110, 110, 140), self.rect)
 
     def reveal(self, game):
         self.is_open = True

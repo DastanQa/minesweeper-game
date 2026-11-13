@@ -1,4 +1,4 @@
-# mine_cell.py: миналы ұяшық (еншілес класс)
+# mine_cell.py: миналы ұяшық
 import pygame
 
 from cell import Cell
@@ -9,7 +9,7 @@ class MineCell(Cell):
         super().__init__(row, col)
         self.exploded = False  # ойыншы дәл осы минаны басты ма
 
-    def draw(self, screen, font, selected):
+    def draw(self, screen, font):
         if self.is_open:
             color = (150, 70, 70)
             if self.exploded:
@@ -17,7 +17,7 @@ class MineCell(Cell):
             pygame.draw.rect(screen, color, self.rect)
             pygame.draw.circle(screen, (30, 30, 30), self.rect.center, 10)
         else:
-            super().draw(screen, font, selected)
+            super().draw(screen, font)
 
     def reveal(self, game):
         super().reveal(game)

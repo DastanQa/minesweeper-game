@@ -10,6 +10,7 @@ def main(max_frames=None):
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Сапёр")
     font = pygame.font.Font(FONT_PATH, 24)
+    big_font = pygame.font.Font(FONT_PATH, 56)
     clock = pygame.time.Clock()
     game = Game()
     running = True
@@ -19,12 +20,13 @@ def main(max_frames=None):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r and game.over:
+                if event.key == pygame.K_r and game.state == "end":
                     game = Game()
+                    game.state = "play"
                 else:
                     game.handle_key(event.key)
         game.update()
-        game.draw(screen, font)
+        game.draw(screen, font, big_font)
         pygame.display.flip()
         clock.tick(60)
         frame = frame + 1
