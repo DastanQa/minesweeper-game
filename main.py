@@ -1,16 +1,16 @@
-# main.py: ойын циклі
+# main.py: ойын циклі. Ойынды import арқылы жинайды
 import pygame
 
 from game import Game
-from settings import WIDTH, HEIGHT, FONT_PATH
+from settings import WIDTH, HEIGHT, load_font
 
 
 def main(max_frames=None):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Сапёр")
-    font = pygame.font.Font(FONT_PATH, 24)
-    big_font = pygame.font.Font(FONT_PATH, 56)
+    font = load_font("font.ttf", 24)
+    big_font = load_font("font_bold.ttf", 56)
     clock = pygame.time.Clock()
     game = Game()
     running = True
@@ -20,11 +20,9 @@ def main(max_frames=None):
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r and game.state == "end":
-                    game = Game()
-                    game.state = "play"
-                else:
-                    game.handle_key(event.key)
+                game.handle_key(event.key)
+        if game.quit:
+            running = False
         game.update()
         game.draw(screen, font, big_font)
         pygame.display.flip()

@@ -1,25 +1,34 @@
-# settings.py: ортақ баптаулар
-WIDTH, HEIGHT = 400, 470
-FONT_PATH = r"C:\Windows\Fonts\segoeui.ttf"
+# settings.py: ортақ баптаулар және суретті, дыбысты, қаріпті жүктейтін функциялар
+import os
 
+import pygame
+
+WIDTH, HEIGHT = 480, 560
 SIZE = 8          # алаң 8x8
 MINES = 10        # мина саны
-CELL = 50         # бір ұяшықтың өлшемі
-TOP = 70          # жоғарғы жолақтың биіктігі
+CELL = 56         # бір ұяшықтың қадамы (сурет 2 пиксель кіші: ұяшықтар арасында саңылау бар)
+LEFT = 16         # алаңның сол жақ шеті
+TOP = 96          # жоғарғы жолақтың биіктігі
 
 POINTS = 10       # әр қауіпсіз ұяшық үшін ұпай
 WIN_BONUS = 200   # жеңіс үшін қосымша ұпай
-END_DELAY = 90    # жеңіліс/жеңістен кейін алаңды көрсету кадрлары (1,5 секунд)
+END_DELAY = 90    # жеңістен/жеңілістен кейін алаңды көрсету кадрлары (1,5 секунд)
 
-# 1-8 сандарының түстері
-NUM_COLORS = [
-    (0, 0, 0),
-    (40, 80, 220),
-    (30, 140, 60),
-    (210, 50, 50),
-    (20, 20, 140),
-    (140, 30, 30),
-    (20, 140, 140),
-    (0, 0, 0),
-    (90, 90, 90),
-]
+BG_COLOR = (15, 15, 35)
+ASSETS = os.path.join(os.path.dirname(__file__), "assets")
+
+
+def load_image(name, size):
+    path = os.path.join(ASSETS, name)
+    image = pygame.image.load(path).convert_alpha()
+    return pygame.transform.scale(image, size)
+
+
+def load_sound(name):
+    path = os.path.join(ASSETS, name)
+    return pygame.mixer.Sound(path)
+
+
+def load_font(name, size):
+    path = os.path.join(ASSETS, name)
+    return pygame.font.Font(path, size)

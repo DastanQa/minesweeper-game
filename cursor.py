@@ -1,13 +1,18 @@
-# cursor.py: таңдалған ұяшықты көрсететін жақтау
+# cursor.py: таңдалған ұяшықты көрсететін жақтау (ойыншының объектісі)
 import pygame
 
 from game_object import GameObject
-from settings import SIZE, CELL
+from settings import SIZE, CELL, load_image
 
 
 class Cursor(GameObject):
     def __init__(self):
-        super().__init__(0, 0)
+        self.frames = []
+        for i in range(2):
+            self.frames.append(load_image(f"cursor_{i}.png", (CELL - 2, CELL - 2)))
+        super().__init__(self.frames[0], 0, 0)
+        self.frame = 0
+        self.last_switch = pygame.time.get_ticks()
 
     def move(self, key):
         if key == pygame.K_UP and self.row > 0:
@@ -19,15 +24,15 @@ class Cursor(GameObject):
         if key == pygame.K_RIGHT and self.col < SIZE - 1:
             self.set_place(self.row, self.col + 1)
 
-    def is_on(self, cell):
-        return cell.row == self.row and cell.col == self.col
+    def find_cell(self, cells):
+        # курсор тұрған ұяшықты соқтығысу арқылы табады
+        hits = pygame.sprite.spritecollide(self, cells, False)
+        return hits[0]
 
-    def draw(self, screen, font):
-        color = (255, 210, 60)
-        x = self.rect.x
-        y = self.rect.y
-        size = CELL - 2
-        pygame.draw.rect(screen, color, pygame.Rect(x, y, size, 4))
-        pygame.draw.rect(screen, color, pygame.Rect(x, y + size - 4, size, 4))
-        pygame.draw.rect(screen, color, pygame.Rect(x, y, 4, size))
-        pygame.draw.rect(screen, color, pygame.Rect(x + size - 4, y, 4, size))
+    def update(self):
+        # жақтау жыпылықтайды: екі кадр кезекпен ауысады
+        now = pygame.time.get_ticks()
+        if now - self.last_switch > 350:
+            self.frame = (self.frame + 1) % len(self.frames)
+            self.image = self.frames[self.frame]
+            self.last_switch = now

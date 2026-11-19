@@ -1,22 +1,24 @@
-# game_object.py: ата-ана класы, ойындағы барлық объектіге ортақ
+# game_object.py: ата-ана класы. Алаңдағы барлық объектіге (ұяшық, курсор) ортақ
 import pygame
 
-from settings import CELL, TOP
+from settings import LEFT, TOP, CELL
 
 
-class GameObject:
-    def __init__(self, row, col):
+class GameObject(pygame.sprite.Sprite):
+    def __init__(self, image, row, col):
+        super().__init__()
+        self.image = image
         self.row = row
         self.col = col
-        self.rect = pygame.Rect(col * CELL, TOP + row * CELL, CELL - 2, CELL - 2)
+        self.rect = self.image.get_rect()
+        self.set_place(row, col)
 
     def set_place(self, row, col):
+        # объектіні алаңның керек қатары мен бағанына қояды
         self.row = row
         self.col = col
-        self.rect = pygame.Rect(col * CELL, TOP + row * CELL, CELL - 2, CELL - 2)
-
-    def draw(self, screen, font):
-        pass
+        self.rect.topleft = (LEFT + col * CELL, TOP + row * CELL)
 
     def update(self):
+        # еншілес кластар қайта анықтайды (анимация)
         pass
